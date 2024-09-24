@@ -1,0 +1,55 @@
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-width: 600px;
+  margin: 20px auto; /* Center the container */
+}
+
+.quiz-title {
+  margin-bottom: 20px;
+}
+
+.question-container {
+  margin-bottom: 20px;
+}
+
+.answer-choices {
+  display: flex;
+  flex-direction: column; /* Arrange choices vertically */
+}
+
+.answer-choices label {
+  display: block; /* Make labels block-level for better spacing */
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.answer-choices input[type="radio"] {
+  margin-right: 10px; /* Add some space between the radio button and label text */
+}
+
+.tooltip-container {
+  position: relative; /* Necessary for tooltip positioning */
+  margin-top: 10px; /* Add some spacing */
+}
+
+.tooltip-text {
+  visibility: hidden; 
+  position: absolute;
+  bottom: 100%; 
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333; 
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 3px;
+  z-index: 1; 
+}
+
+.tooltip-text.visible {
+  visibility: visible;
+}
