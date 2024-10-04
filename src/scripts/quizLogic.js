@@ -46,8 +46,7 @@ async function getQuestions(keyword = 'canada') {
   try {
     const questionsRef = query(
       collection(db, 'questions'),
-      orderBy("id"),
-      limit(100)
+      orderBy("id")
     );
 
     const querySnapshot = await getDocs(questionsRef);
