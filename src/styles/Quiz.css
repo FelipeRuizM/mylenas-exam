@@ -1,55 +1,100 @@
+/* Basic Styling */
 .quiz-container {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
+  font-family: 'Poppins', sans-serif; /* Choose a modern font */
+  max-width: 800px; 
+  margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  max-width: 600px;
-  margin: 20px auto; /* Center the container */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
 }
 
 .quiz-title {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.question-container {
-  margin-bottom: 20px;
+/* Search Bar */
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-right: 10px;
 }
 
-.answer-choices {
-  display: flex;
-  flex-direction: column; /* Arrange choices vertically */
-}
-
-.answer-choices label {
-  display: block; /* Make labels block-level for better spacing */
-  margin-bottom: 5px;
+button {
+  background-color: #007bff; /* Example button color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
   cursor: pointer;
 }
 
-.answer-choices input[type="radio"] {
-  margin-right: 10px; /* Add some space between the radio button and label text */
+/* Question Styling */
+.question-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 3px;
 }
 
+/* Keyword Container */
+.keyword-container, .info-container {
+  display: flex; /* Arrange items horizontally */
+  align-items: center; /* Vertically center items */
+  justify-content: center;
+  margin-bottom: 20px; /* Add some space below */
+}
+
+.keyword-container input[type="text"] {
+  flex-grow: 0.7; /* Input takes up available space */
+  margin-right: 10px; /* Space between input and button */
+}
+
+.info-container input[type="text"] {
+  flex-grow: 0.7; /* Input takes up available space */
+  margin-right: 10px; /* Space between input and button */
+}
+
+.question-page {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.question-text {
+  margin-bottom: 15px;
+}
+
+.answer-choices label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Observations Section */
 .tooltip-container {
-  position: relative; /* Necessary for tooltip positioning */
-  margin-top: 10px; /* Add some spacing */
+  position: relative; /* For tooltip positioning */
 }
 
-.tooltip-text {
-  visibility: hidden; 
+.tooltip-container input[type="text"] {
+  width: 100%;
+}
+
+/* Example Tooltip Styling (customize as needed) */
+.tooltip-container:hover::after {
   position: absolute;
-  bottom: 100%; 
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333; 
-  color: #fff;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  color: white;
   padding: 5px 10px;
   border-radius: 3px;
-  z-index: 1; 
+  z-index: 1;
 }
 
-.tooltip-text.visible {
-  visibility: visible;
+@media (max-width: 768px) { 
+  .quiz-container {
+    font-size: 16px;
+  }
 }
