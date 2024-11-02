@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mylenas-exam/static/css/main.23e84130.css",
-    "main.js": "/mylenas-exam/static/js/main.8f48723e.js",
+    "main.css": "/mylenas-exam/static/css/main.bd162b0e.css",
+    "main.js": "/mylenas-exam/static/js/main.8ab6cb51.js",
     "static/js/453.69c4d4a8.chunk.js": "/mylenas-exam/static/js/453.69c4d4a8.chunk.js",
     "index.html": "/mylenas-exam/index.html",
-    "main.23e84130.css.map": "/mylenas-exam/static/css/main.23e84130.css.map",
-    "main.8f48723e.js.map": "/mylenas-exam/static/js/main.8f48723e.js.map",
+    "main.bd162b0e.css.map": "/mylenas-exam/static/css/main.bd162b0e.css.map",
+    "main.8ab6cb51.js.map": "/mylenas-exam/static/js/main.8ab6cb51.js.map",
     "453.69c4d4a8.chunk.js.map": "/mylenas-exam/static/js/453.69c4d4a8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.23e84130.css",
-    "static/js/main.8f48723e.js"
+    "static/css/main.bd162b0e.css",
+    "static/js/main.8ab6cb51.js"
   ]
 }
