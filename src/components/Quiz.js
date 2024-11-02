@@ -1,46 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import '../styles/Quiz.css';
-import { getQuestions, updateAnswer, updateComment, getInfo } from '../scripts/quizLogic';
+import { getQuestions, updateAnswer, updateComment, getQuestionsTags, getTagColor, addTag } from '../scripts/quizLogic';
 
 export const Quiz = () => {
-  const [keyword, setKeyword] = useState('');
-  const [info, setInfo] = useState('');
-  const [questions, setQuestions] = useState([]);
-  const [showComments, setShowComments] = useState({});
-
-  // useEffect(() => {
-  //   loadPrevAnswers();
-  // }, [questions]);
-
-  // const loadPrevAnswers = () => {
-
-  // }
-
-  const toggleComments = (questionId) => {
-    setShowComments((prevState) => ({
-      ...prevState,
-      [questionId]: !prevState[questionId],
-    }));
-  };
-
-  const handleInfoChange = (event) => {
-    setInfo(event.target.value);
-  }
-
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value);
-  };
-
-  const handleSearch = async () => {
-    const fetchedQuestions = await getQuestions(keyword);
-    setQuestions(fetchedQuestions);
-  };
-
-  const handleInfo = async () => {
-    const fetchedInfo = await getInfo(info);
-    document.getElementById('question-info').textContent = fetchedInfo;
-  }
-
   // Custom debounce function
   const debounce = (delay, callback) => {
     let timer;
@@ -77,12 +39,57 @@ export const Quiz = () => {
     []
   );
 
+  const debouncedAddTag = useCallback(
+    debounce(2000, async (questionId, newTag) => {
+      try {
+        await addTag(questionId, newTag);
+      } catch (error) {
+        console.error('Error saving comment:', error);
+      }
+    }),
+    []
+  );
+
+  const [keyword, setKeyword] = useState('');
+  const [filterTags, setFilterTags] = useState('');
+  const [questions, setQuestions] = useState([]);
+  const [showComments, setShowComments] = useState({});
+
+  const toggleComments = (questionId) => {
+    setShowComments((prevState) => ({
+      ...prevState,
+      [questionId]: !prevState[questionId],
+    }));
+  };
+
+  const handleKeywordChange = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const handleKeywordSearch = async () => {
+    const fetchedQuestions = await getQuestions(keyword);
+    setQuestions(fetchedQuestions);
+  };
+
+  const handleFilterTagsChange = (event) => {
+    setFilterTags(event.target.value);
+  }
+
+  const handleFilterTagsSearch = async () => {
+    const fetchedQuestions = await getQuestionsTags(filterTags);
+    setQuestions(fetchedQuestions);
+  };
+
   const handleAnswerChange = async (id, choice) => {
     debouncedSetAnswer(id, choice);
   };
 
   const handleCommentChange = async (id, value) => {
     debouncedSetComment(id, value);
+  }
+
+  const handleTagAdded = async (id, newTag) => {
+    debouncedAddTag(id, newTag);
   }
 
   return (
@@ -96,21 +103,21 @@ export const Quiz = () => {
           value={keyword}
           onChange={handleKeywordChange}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleKeywordSearch}>Search</button>
       </div>
 
-      <div className='info-container'>
+      <div className='tags-search-container'>
         <input
           type="text"
-          placeholder="Get comments and previous answers"
-          value={info}
-          onChange={handleInfoChange}
+          placeholder="Enter tags separated by commas"
+          value={filterTags}
+          onChange={handleFilterTagsChange}
         />
-        <button onClick={handleInfo}>Search</button>
+        <button onClick={handleFilterTagsSearch}>Search</button>
       </div>
 
       <p id='question-info'></p>
-      
+
       {questions.length !== 0 ? questions.map((question, index) => (
         <div key={index} className="question-container">
           <h3 className="question-title">Question {question.id} | Page {question.page_number}</h3>
@@ -136,16 +143,39 @@ export const Quiz = () => {
 
           {showComments[question.id] && (
             <div className="comments">
+              <p>Previous Answer: {question.prev_answer}</p>
+              <p>Previous Comments: {question.comments}</p>
               <input
                 type="text"
                 id={`comments-${question.documentId}`}
                 name="comments"
+                placeholder="Enter comments"
                 onChange={() => handleCommentChange(question.documentId, document.getElementById(`comments-${question.documentId}`).value)}
               />
             </div>
           )}
+
+          <div className="tags-container">
+            <div className="tags">
+              {question.tags?.map((tag) => (
+                <span key={tag} style={{ backgroundColor: getTagColor(tag) }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className='tag-adder'>
+              <input
+                type="text"
+                id={`tags-${question.documentId}`}
+                name="tags"
+                placeholder="Add tag"
+                onChange={() => handleTagAdded(question.documentId, document.getElementById(`tags-${question.documentId}`).value)}
+              />
+            </div>
+          </div>
         </div>
-      )) : <p>No questions found with that keyword</p>}
+      )) : <p>No questions found with that keyword/tag</p>}
     </div >
   );
 }

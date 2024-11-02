@@ -41,19 +41,14 @@ button {
 }
 
 /* Keyword Container */
-.keyword-container, .info-container {
+.keyword-container, .tags-search-container {
   display: flex; /* Arrange items horizontally */
   align-items: center; /* Vertically center items */
   justify-content: center;
   margin-bottom: 20px; /* Add some space below */
 }
 
-.keyword-container input[type="text"] {
-  flex-grow: 0.7; /* Input takes up available space */
-  margin-right: 10px; /* Space between input and button */
-}
-
-.info-container input[type="text"] {
+.keyword-container input[type="text"], .tags-search-container input[type="text"] {
   flex-grow: 0.7; /* Input takes up available space */
   margin-right: 10px; /* Space between input and button */
 }
@@ -91,6 +86,26 @@ button {
   padding: 5px 10px;
   border-radius: 3px;
   z-index: 1;
+}
+
+.tag-adder {
+  margin-top: 1rem;
+}
+
+.tags {
+  display: flex; /* Enable flexbox for wrapping */
+  flex-wrap: wrap;
+  margin-top: 10px; /* Add some space above the tags */
+}
+
+.tags span {
+  background-color: #663399; /* Purple background for tags */
+  color: #fff;               /* White text color */
+  padding: 5px 10px;       /* Add padding */
+  margin: 5px;               /* Add margin for spacing */
+  border-radius: 20px;     /* Rounded corners for the pill shape */
+  font-size: 14px;
+  font-weight: 500;         /* Slightly bolder font weight */
 }
 
 @media (max-width: 768px) { 
