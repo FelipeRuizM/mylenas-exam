@@ -1,7 +1,7 @@
 import { collection, getDocs, getDoc, limit, orderBy, query, doc, updateDoc, where } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Import your Firestore instance
 
-const DATABASE = 'questions-test';
+const DATABASE = 'questions'; // questions-test
 
 function getAnswerChoices(answerChoicesStr) {
   const answers_choices = []
