@@ -3,53 +3,6 @@ import '../styles/Quiz.css';
 import { getQuestions, updateAnswer, updateComment, getQuestionsTags, getTagColor, addTag } from '../scripts/quizLogic';
 
 export const Quiz = () => {
-  // Custom debounce function
-  const debounce = (delay, callback) => {
-    let timer;
-    return (...args) => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-      timer = setTimeout(() => {
-        callback(...args);
-        timer = null;
-      }, delay);
-    };
-  };
-
-  const debouncedSetAnswer = useCallback(
-    debounce(1000, async (questionId, answer) => {
-      try {
-        await updateAnswer(questionId, answer);
-      } catch (error) {
-        console.error('Error saving answer:', error);
-      }
-    }),
-    []
-  );
-
-  const debouncedSetComment = useCallback(
-    debounce(2000, async (questionId, value) => {
-      try {
-        await updateComment(questionId, value);
-      } catch (error) {
-        console.error('Error saving comment:', error);
-      }
-    }),
-    []
-  );
-
-  const debouncedAddTag = useCallback(
-    debounce(2000, async (questionId, newTag) => {
-      try {
-        await addTag(questionId, newTag);
-      } catch (error) {
-        console.error('Error saving comment:', error);
-      }
-    }),
-    []
-  );
-
   const [keyword, setKeyword] = useState('');
   const [filterTags, setFilterTags] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -80,16 +33,41 @@ export const Quiz = () => {
     setQuestions(fetchedQuestions);
   };
 
+  // Custom debounce function
+  const debounce = (delay, callback) => {
+    let timer;
+    return (...args) => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        callback(...args);
+        timer = null;
+      }, delay);
+    };
+  };
+
+  const debouncedSetAnswer = useCallback(
+    debounce(1000, async (questionId, answer) => {
+      try {
+        await updateAnswer(questionId, answer);
+      } catch (error) {
+        console.error('Error saving answer:', error);
+      }
+    }),
+    []
+  );
+
   const handleAnswerChange = async (id, choice) => {
     debouncedSetAnswer(id, choice);
   };
 
   const handleCommentChange = async (id, value) => {
-    debouncedSetComment(id, value);
+    await updateComment(id, value);
   }
 
   const handleTagAdded = async (id, newTag) => {
-    debouncedAddTag(id, newTag);
+    await addTag(id, newTag);
   }
 
   return (
@@ -144,14 +122,23 @@ export const Quiz = () => {
           {showComments[question.id] && (
             <div className="comments">
               <p>Previous Answer: {question.prev_answer}</p>
-              <p>Previous Comments: {question.comments}</p>
+              <div>
+                Previous Comments:
+                {
+                  Array.isArray(question.comments) ? ( // Check if it's an array
+                    question.comments.map(comment => <p key={comment}>- {comment}</p>)
+                  ) : (
+                    <p key={question.comments}>- {question.comments}</p> // If string, render it directly
+                  )
+                }
+              </div>
               <input
                 type="text"
                 id={`comments-${question.documentId}`}
                 name="comments"
                 placeholder="Enter comments"
-                onChange={() => handleCommentChange(question.documentId, document.getElementById(`comments-${question.documentId}`).value)}
               />
+              <button onClick={() => handleCommentChange(question.documentId, document.getElementById(`comments-${question.documentId}`).value)}>Add comment</button>
             </div>
           )}
 
@@ -170,8 +157,8 @@ export const Quiz = () => {
                 id={`tags-${question.documentId}`}
                 name="tags"
                 placeholder="Add tag"
-                onChange={() => handleTagAdded(question.documentId, document.getElementById(`tags-${question.documentId}`).value)}
               />
+              <button onClick={() => handleTagAdded(question.documentId, document.getElementById(`tags-${question.documentId}`).value)}>Add tag</button>
             </div>
           </div>
         </div>

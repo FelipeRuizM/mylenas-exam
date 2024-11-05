@@ -1,7 +1,7 @@
 import { collection, getDocs, getDoc, limit, orderBy, query, doc, updateDoc, where } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Import your Firestore instance
 
-const DATABASE = 'questions'; // questions-test
+const DATABASE = 'questions'; // questions-test or questions
 
 function getAnswerChoices(answerChoicesStr) {
   const answers_choices = []
@@ -33,10 +33,28 @@ async function updateAnswer(id, choice) {
 
 async function updateComment(id, value) {
   try {
+    if (value.trim() === "") {
+      return;
+    }
+
     const questionRef = doc(db, DATABASE, id);
-    await updateDoc(questionRef, {
-      comments: value
-    });
+    const questionSnap = await getDoc(questionRef); 
+
+    if (questionSnap.exists()) {
+      const currentComments = questionSnap.data().comments || []; // Get existing comments or initialize as empty array
+      let updatedComments = [...currentComments, value]; // Add new comment to the array
+      
+      if (updateComment.length === 1) {
+        updatedComments = updatedComments[0];
+      }
+      await updateDoc(questionRef, {
+        comments: updatedComments 
+      });
+
+    } else {
+      console.error("No such document!");
+      return []; 
+    }
 
   } catch (error) {
     console.error("Error updating comment: ", error);
@@ -50,13 +68,15 @@ async function getQuestions(keyword = 'canada') {
     const questionsRef = query(
       collection(db, DATABASE),
       orderBy("id"),
-      limit(5)
+      // limit(5)
     );
 
     const querySnapshot = await getDocs(questionsRef);
     const result = [];
     querySnapshot.forEach((questionData) => {
       const question = questionData.data();
+      // console.log("question: ");
+      // console.log(question);
       question.documentId = questionData.id;
 
       if (question.question_text && question.answer_choices) {
@@ -65,7 +85,6 @@ async function getQuestions(keyword = 'canada') {
           question.answer_choices.toLowerCase().includes(keyword.toLowerCase())
         ) {
           question.answer_choices = getAnswerChoices(question.answer_choices);
-          // question.show = false;
           result.push(question);
         }
       }
@@ -87,11 +106,12 @@ async function getQuestionsTags(filterTags = 'canada') {
 
     // Apply filtering if filterTags are provided
     if (tagArray.length > 0) {
-      questionsRef = query(questionsRef, where("tags", "array-contains-any", tagArray));
+      questionsRef = query(
+        questionsRef, 
+        where("tags", "array-contains-any", tagArray),
+        // limit(5)
+      );
     }
-
-    // Apply ordering and limit
-    questionsRef = query(questionsRef, orderBy("id"), limit(5));
 
     // Fetch the documents
     const querySnapshot = await getDocs(questionsRef);
@@ -99,9 +119,14 @@ async function getQuestionsTags(filterTags = 'canada') {
     querySnapshot.forEach((questionData) => {
       const question = questionData.data();
       question.documentId = questionData.id;
+      question.answer_choices = getAnswerChoices(question.answer_choices);
       result.push(question);
     });
+
+    console.log(result);
+
     return result;
+
 
   } catch (error) {
     console.error("Error getting questions: ", error);
@@ -127,10 +152,6 @@ const getTagColor = (tagName) => {
     '#d35400', // Orange
     '#f39c12', // Sun Flower
     '#1abc9c', // Turquoise
-    '#34495e', // Wet Asphalt
-    '#7f8c8d', // Concrete
-    '#95a5a6', // Light Grey
-    '#bdc3c7', // Silver
     '#ecf0f1', // Clouds
   ];
   // Create a simple hash function to assign consistent colors to tags
@@ -144,6 +165,10 @@ const getTagColor = (tagName) => {
 
 const addTag = async (id, newTag) => {
   try {
+    if (newTag.trim() === "") {
+      return;
+    }
+
     const questionRef = doc(db, DATABASE, id);
 
     // 1. Get the existing tags
